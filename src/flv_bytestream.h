@@ -96,6 +96,7 @@ typedef struct flv_buffer
     uint64_t d_total;
 } flv_buffer;
 
+
 flv_buffer *flv_create_writer( const char *filename );
 int flv_append_data( flv_buffer *c, uint8_t *data, unsigned size );
 int flv_write_byte( flv_buffer *c, uint8_t *byte );

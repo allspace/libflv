@@ -3,9 +3,14 @@
 #include <string.h>
 #include "flv_bytestream.h"
 
+typedef union
+{
+	double f; 
+	uint64_t i;
+}dbl2int_type;
 uint64_t flv_dbl2int( double value )
 {
-    //return (union {double f; uint64_t i;}){value}.i;
+    return ((dbl2int_type*)(&value))->i;
 }
 
 /* Put functions  */
@@ -60,27 +65,6 @@ void flv_put_amf_double( flv_buffer *c, double d )
     flv_put_be64( c, flv_dbl2int( d ) );
 }
 
-/* flv writing functions */
-
-flv_buffer *flv_create_writer( const char *filename )
-{
-    flv_buffer *c = (flv_buffer *)calloc( 1, sizeof(flv_buffer) );
-    if( !c )
-        return NULL;
-
-    if( !strcmp( filename, "-" ) )
-//        c->fp = stdout;
-//    else
-//        c->fp = fopen( filename, "wb" );
-//    if( !c->fp )
-    {
-        free( c );
-        return NULL;
-    }
-
-    return c;
-}
-
 int flv_append_data( flv_buffer *c, uint8_t *data, unsigned size )
 {
     unsigned ns = c->d_cur + size;
@@ -112,19 +96,4 @@ void flv_rewrite_amf_be24( flv_buffer *c, unsigned length, unsigned start )
      *(c->data + start + 0) = length >> 16;
      *(c->data + start + 1) = length >> 8;
      *(c->data + start + 2) = length >> 0;
-}
-
-int flv_flush_data( flv_buffer *c )
-{
-    if( !c->d_cur )
-        return 0;
-
-//    if( fwrite( c->data, c->d_cur, 1, c->fp ) != 1 )
-//        return -1;
-
-    c->d_total += c->d_cur;
-
-    c->d_cur = 0;
-
-    return 0;
 }

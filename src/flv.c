@@ -5,12 +5,6 @@
 #include "flv_bytestream.h"
 typedef void *hnd_t;
 
-#define CHECK(x)\
-do {\
-    if( (x) < 0 )\
-        return -1;\
-} while( 0 )
-
 typedef struct _flv_hnd_t_
 {
     flv_buffer *c;
@@ -28,8 +22,8 @@ typedef struct _flv_hnd_t_
     uint64_t i_bitrate_pos;
 
     uint8_t b_write_length;
-    int64_t i_prev_dts;
-    int64_t i_prev_cts;
+    //int64_t i_prev_dts;
+    //int64_t i_prev_cts;
     int64_t i_delay_time;
     int64_t i_init_delta;
     int i_delay_frames;
@@ -38,7 +32,7 @@ typedef struct _flv_hnd_t_
     int b_vfr_input;
     int b_dts_compress;
 
-    unsigned start;
+    //unsigned start;
 }flv_hnd_t;
 
 typedef struct x264_param_t
@@ -127,7 +121,7 @@ static ALWAYS_INLINE uint16_t endian_fix16( uint16_t x )
 #endif
 
 
-
+/*
 static int write_header( flv_buffer *c )
 {
     flv_put_tag( c, "FLV" ); // Signature
@@ -158,7 +152,8 @@ static int open_file( char *psz_filename, hnd_t *p_handle, int use_dts_compress 
 
     return 0;
 }
-
+*/
+#if 0
 static int set_param( hnd_t handle, x264_param_t *p_param )
 {
 	int start = 0;
@@ -226,6 +221,7 @@ static int set_param( hnd_t handle, x264_param_t *p_param )
 
     return 0;
 }
+
 typedef struct
 {
     /* Size of payload (including any padding) in bytes. */
@@ -352,7 +348,7 @@ static int write_frame( hnd_t handle, uint8_t *p_nalu, int i_size, int64_t i_pts
     flv_put_be24( c, 0 );
 
     p_flv->start = c->d_cur;
-    flv_put_byte( c, b_keyframe ? FLV_FRAME_KEY : FLV_FRAME_INTER );
+    flv_put_byte( c, b_keyframe ? FLV_FRAME_KEY : FLV_FRAME_INTER);
     flv_put_byte( c, 1 ); // AVC NALU
     flv_put_be24( c, offset );
 
@@ -373,6 +369,7 @@ static int write_frame( hnd_t handle, uint8_t *p_nalu, int i_size, int64_t i_pts
 
     return i_size;
 }
+#endif
 /*
 static void rewrite_amf_double( FILE *fp, uint64_t position, double value )
 {
@@ -381,13 +378,14 @@ static void rewrite_amf_double( FILE *fp, uint64_t position, double value )
     fwrite( &x, 8, 1, fp );
 }
 */
+/*
 static int close_file( hnd_t handle, int64_t largest_pts, int64_t second_largest_pts )
 {
     flv_hnd_t *p_flv = (flv_hnd_t *)handle;
     flv_buffer *c = p_flv->c;
 
     CHECK( flv_flush_data( c ) );
-	/*
+	
     double total_duration = (2 * largest_pts - second_largest_pts) * p_flv->d_timebase;
 
     if( x264_is_regular_file( c->fp ) && total_duration > 0 )
@@ -407,9 +405,10 @@ static int close_file( hnd_t handle, int64_t largest_pts, int64_t second_largest
     }
 
     fclose( c->fp );
-	*/
+	
     free( p_flv );
     free( c );
 
     return 0;
 }
+*/
